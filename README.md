@@ -1,5 +1,10 @@
-ThinkAdmin for PHP
+# ThinkAdmin for PHP
 --
+
+## 1.对代码的分析理解的注释在 learn 分支.
+
+
+---
 ## 大道至简 · 悟在天成
 
 * ThinkAdmin 是一个基于 Thinkphp 5.1.x 开发的后台管理系统，集成后台系统常用功能。
