@@ -34,6 +34,7 @@ class Login extends BasicAdmin
      */
     public function initialize()
     {
+        //如果已经登录了，而且不是退出登录.
         if (session('user.id') && $this->request->action() !== 'out') {
             $this->redirect('@admin');
         }
@@ -50,11 +51,14 @@ class Login extends BasicAdmin
      */
     public function index()
     {
+        //当用浏览器打开时
         if ($this->request->isGet()) {
             return $this->fetch('', ['title' => '用户登录']);
         }
+        //当用户 登录 时.
         // 输入数据效验
         $username = $this->request->post('username', '', 'trim');
+        //TODO,密码明文传输!!!
         $password = $this->request->post('password', '', 'trim');
         strlen($username) < 4 && $this->error('登录账号长度不能少于4位有效字符!');
         strlen($password) < 4 && $this->error('登录密码长度不能少于4位有效字符!');
@@ -63,11 +67,16 @@ class Login extends BasicAdmin
         empty($user) && $this->error('登录账号不存在，请重新输入!');
         ($user['password'] !== md5($password)) && $this->error('登录密码与账号不匹配，请重新输入!');
         empty($user['status']) && $this->error('账号已经被禁用，请联系管理!');
+
         // 更新登录信息
+        //   SET `login_at`=now(),`login_num`=login_num+1
         $data = ['login_at' => Db::raw('now()'), 'login_num' => Db::raw('login_num+1')];
         Db::name('SystemUser')->where(['id' => $user['id']])->update($data);
+       //保存 user 信息到 session 中.
         session('user', $user);
+        //如果 用户的 authorize 信息不为空,就执行后面的 applyAuthNode 操作.
         !empty($user['authorize']) && NodeService::applyAuthNode();
+        //把行为写入数据库做记录 log .
         LogService::write('系统管理', '用户登录系统成功');
         $this->success('登录成功，正在进入系统...', '@admin');
     }

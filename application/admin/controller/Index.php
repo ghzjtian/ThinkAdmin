@@ -40,8 +40,19 @@ class Index extends BasicAdmin
     public function index()
     {
         NodeService::applyAuthNode();
+
+        //在 '系统菜单表' 中取得启用的菜单项
         $list = (array)Db::name('SystemMenu')->where(['status' => '1'])->order('sort asc,id asc')->select();
+        /**
+         * //双感叹号(!!),返回一个(boolean)值,
+         * //https://stackoverflow.com/questions/2127260/double-not-operator-in-php
+         * //It is functionally equivalent to a cast to boolean:
+         * //return (bool)$row;
+         **/
         $menus = $this->buildMenuData(ToolsService::arr2tree($list), NodeService::get(), !!session('user'));
+
+        //如果没有菜单并且没有登录,就跳到登录页面
+        //如果有菜单，而且不需要 权限认证，就跳到权限认证的界面
         if (empty($menus) && !session('user.id')) {
             $this->redirect('@admin/login');
         }
@@ -58,16 +69,28 @@ class Index extends BasicAdmin
     private function buildMenuData($menus, $nodes, $isLogin)
     {
         foreach ($menus as $key => &$menu) {
+            //如果是有子菜单的话，就继续子菜单的权限过滤.
             !empty($menu['sub']) && $menu['sub'] = $this->buildMenuData($menu['sub'], $nodes, $isLogin);
-            if (!empty($menu['sub'])) {
+            if (!empty($menu['sub'])) {//如果有子菜单
                 $menu['url'] = '#';
-            } elseif (preg_match('/^https?\:/i', $menu['url'])) {
+            } elseif (preg_match('/^https?\:/i', $menu['url'])) {//如果没有子菜单，而且有分配了 url 地址
+                // i修正模式,不区分大小写
                 continue;
-            } elseif ($menu['url'] !== '#') {
+            } elseif ($menu['url'] !== '#') {   //如果没有子菜单,而且没有填写 '#' 符号.
+                /**
+                 * preg_replace('/[\W]/', '/', $menu['url']),在 $menu 的 url 里，所有不是'数字，字母，下划线' 的都被替换成了 '/'
+                 * array_slice,在数组中取出一段，当前取出(model/controller/action)
+                 *
+                 */
                 $node = join('/', array_slice(explode('/', preg_replace('/[\W]/', '/', $menu['url'])), 0, 3));
                 $menu['url'] = url($menu['url']) . (empty($menu['params']) ? '' : "?{$menu['params']}");
+
+                //如果是 节点array 中有菜单中指定的节点,而且 节点需要登录控制，并且 没有登录
                 if (isset($nodes[$node]) && $nodes[$node]['is_login'] && empty($isLogin)) {
+                    //过滤这个节点
                     unset($menus[$key]);
+
+                    //如果是 节点array 中有菜单中指定的节点,而且 节点需要 身份认证控制,已经登录了,但没有通过 身份认证控制
                 } elseif (isset($nodes[$node]) && $nodes[$node]['is_auth'] && $isLogin && !auth($node)) {
                     unset($menus[$key]);
                 }
@@ -84,9 +107,10 @@ class Index extends BasicAdmin
      */
     public function main()
     {
+        //显示 mysql 的 version
         $_version = Db::query('select version() as ver');
         return $this->fetch('', [
-            'title'     => '后台首页',
+            'title' => '后台首页',
             'think_ver' => App::VERSION,
             'mysql_ver' => array_pop($_version)['ver'],
         ]);

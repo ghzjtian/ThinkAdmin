@@ -1,5 +1,14 @@
-ThinkAdmin for PHP
+# ThinkAdmin for PHP
 --
+
+## 笔记
+### 1.menu 的 javascript 有些不懂，为什么会默认自动选择没有子菜单的顶级菜单作为入口,
+
+
+
+
+---
+
 ## 大道至简 · 悟在天成
 
 * ThinkAdmin 是一个基于 Thinkphp 5.1.x 开发的后台管理系统，集成后台系统常用功能。

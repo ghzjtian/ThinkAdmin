@@ -1,5 +1,5 @@
+<!--导入布局文件 admin/view/public/main.html 文件.-->
 {extend name="admin@public/main"}
-
 {block name="style"}
 <link href="__STATIC__/theme/css/login.css" rel="stylesheet">
 {/block}
@@ -21,7 +21,7 @@
         <ul>
             <li><a href="javascript:void(0)" target="_blank">帮助</a></li>
             <li>
-                <a href="http://sw.bos.baidu.com/sw-search-sp/software/9e6bc213b9d0b/ChromeStandalone_63.0.3239.132_Setup.exe">推荐使用谷歌浏览器</a>
+                <a href="http://sw.bos.baidu.com/sw-search-sp/software/9e6bc213b9d0b/ChromeStandalone_63.0.3239.132_Setup.exe">推荐使用谷歌浏览器(点击下载)</a>
             </li>
         </ul>
     </div>
@@ -38,6 +38,7 @@
             <ul>
                 <li class="username">
                     <i></i>
+                    <!--在浏览器端验证数据的长度,不是空白字符，至少是 4 位.-->
                     <input required pattern="^\S{4,}$" name="username" value="admin" type="text" autofocus="autofocus" autocomplete="off" title="请输入4位及以上的字符" placeholder="请输入用户名/手机号码">
                 </li>
                 <li class="password">
@@ -64,12 +65,16 @@
 </div>
 {/block}
 
+
 {block name="script"}
 <script>
     if (window.location.href.indexOf('#') > -1) {
         window.location.href = window.location.href.split('#')[0];
     }
+
+
     $(function () {
+        // 当点击 Password 栏时的动画效果
         $('[name="password"]').on('focus', function () {
             $('#left-hander').removeClass('initial_left_hand').addClass('left_hand');
             $('#right-hander').removeClass('initial_right_hand').addClass('right_hand')

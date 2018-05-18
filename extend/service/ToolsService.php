@@ -92,12 +92,17 @@ class ToolsService
     {
         list($tree, $map) = [[], []];
         foreach ($list as $item) {
+            //$map[18] = '公众号配置' 的那一行的数据。
             $map[$item[$id]] = $item;
         }
         foreach ($list as $item) {
+            //如果子菜单的 pid 有值 && 对应的父类 的项有数据.
             if (isset($item[$pid]) && isset($map[$item[$pid]])) {
+                //让父类的 [sub] 关联对应的子类
                 $map[$item[$pid]][$son][] = &$map[$item[$id]];
             } else {
+                //如果为 0 ,则表示没有真实的父类数据
+                //筛查出为 0 的父类项
                 $tree[] = &$map[$item[$id]];
             }
         }

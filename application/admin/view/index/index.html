@@ -1,4 +1,6 @@
+<!--导入布局文件 admin/view/public/main.html 文件.-->
 {extend name="admin@public/main"}
+
 
 {block name='body'}
 
@@ -7,6 +9,7 @@
     <div class="topbar-head pull-left">
         <a href="{:url('@')}" class="topbar-logo pull-left">{:sysconf('app_name')} <sup>{:sysconf('app_version')}</sup></a>
     </div>
+    <!--，顶部的菜单会自动选择 没有子菜单的顶部菜单 作为第一入口 ， 在 admin.js 中设置了 data-menu-node 为  -->
     <!--{foreach $menus as $oneMenu}-->
     <a data-menu-node="m-{$oneMenu.id}" data-open="{$oneMenu.url}" class="topbar-btn pull-left transition">
         {notempty name='oneMenu.icon'}<span class='font-s13 {$oneMenu.icon}'></span>&nbsp;{/notempty}
@@ -15,6 +18,7 @@
     <!--{/foreach}-->
     <div class="pull-right">
         <!--{if session('user.id')}-->
+        <!--如果已经登录了-->
         <div class="dropdown">
             <a href="#" class="dropdown-toggle topbar-btn text-center transition" data-toggle="dropdown">
                 <span class="glyphicon glyphicon-user font-s13"></span>
@@ -30,6 +34,7 @@
             </ul>
         </div>
         <!--{else}-->
+        <!--否则还没有登录.-->
         <div class="topbar-info-item">
             <a data-href="{:url('@admin/login')}" data-toggle="dropdown" class=" topbar-btn text-center">
                 <span class='glyphicon glyphicon-user'></span> 立即登录 </span>
@@ -45,17 +50,20 @@
 <div class="framework-leftbar">
     {foreach $menus as $oneMenu}
     <!--{notempty name='$oneMenu.sub'}-->
+    <!--如果一级菜单下面有子菜单-->
     <div class="leftbar-container hide notselect" data-menu-layout="m-{$oneMenu.id}">
         <div class="line-top">
             <i class="layui-icon font-s12">&#xe65f;</i>
         </div>
         {foreach $oneMenu.sub as $twoMenu}
         <!--{empty name='$twoMenu.sub'}-->
+        <!--如果二级菜单下面没子菜单-->
         <a class='transition' data-menu-node="m-{$oneMenu.id}-{$twoMenu.id}" data-open="{$twoMenu.url}">
             {notempty name='twoMenu.icon'}<span class='{$twoMenu.icon} font-icon'></span>&nbsp;{/notempty}
             {$twoMenu.title}
         </a>
         <!--{else}-->
+        <!--如果二级菜单下面有子菜单-->
         <div data-submenu-layout='m-{$oneMenu.id}-{$twoMenu.id}'>
             <a class='menu-title transition'>
                 {notempty name='twoMenu.icon'}<span class='{$twoMenu.icon} font-icon'></span>&nbsp;{/notempty}

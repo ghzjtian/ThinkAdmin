@@ -136,6 +136,7 @@ $(function () {
             } else if (obj && obj.getAttribute('data-menu-node')) {
                 var node = obj.getAttribute('data-menu-node');
                 $('[data-menu-node^="' + node + '-"][data-open!="#"]:first').trigger('click');
+
             }
         };
         // 刷新当前页面
