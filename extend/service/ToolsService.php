@@ -101,8 +101,8 @@ class ToolsService
                 //让父类的 [sub] 关联对应的子类
                 $map[$item[$pid]][$son][] = &$map[$item[$id]];
             } else {
-                //如果为 0 ,则表示没有真实的父类数据
-                //筛查出为 0 的父类项
+
+                //筛查出为 没有真实的父类数据 的项目，如 父类的 id 为0 或者 父类的 status=0
                 $tree[] = &$map[$item[$id]];
             }
         }

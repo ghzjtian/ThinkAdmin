@@ -26,9 +26,11 @@
                 <span class="toggle-icon glyphicon glyphicon-menu-up transition font-s13"></span>
             </a>
             <ul class="dropdown-menu">
+                <!--data-modal Modal弹出层-->
                 <li class="topbar-btn"><a data-modal="{:url('admin/index/pass')}?id={:session('user.id')}" data-title="修改密码"><i class="glyphicon glyphicon-lock"></i> 修改密码</a></li>
                 <li class="topbar-btn"><a data-modal="{:url('admin/index/info')}?id={:session('user.id')}" data-title="修改资料"><i class="glyphicon glyphicon-edit"></i> 修改资料</a></li>
                 <li class="topbar-btn">
+                    <!--// 加载内容到内容区，在加载前提示用户是否要继续操作-->
                     <a data-load="{:url('admin/login/out')}" data-confirm="确定要退出登录吗？"><i class="glyphicon glyphicon-log-out"></i> 退出登录</a>
                 </li>
             </ul>
@@ -86,6 +88,7 @@
 <!-- 左则菜单区域 结束 -->
 
 <!-- 右则内容区域 开始 -->
+<!--根据菜单的网络请求去获得右侧的内容，然后填充到这里-->
 <div class="framework-body"></div>
 <!-- 右则内容区域 结束 -->
 {/block}

@@ -54,8 +54,11 @@ class BasicAdmin extends Controller
      */
     protected function _form($dbQuery = null, $tplFile = '', $pkField = '', $where = [], $extendData = [])
     {
+        //指定 DB 的数据表
         $db = is_null($dbQuery) ? Db::name($this->table) : (is_string($dbQuery) ? Db::name($dbQuery) : $dbQuery);
+        //获得主键值
         $pk = empty($pkField) ? ($db->getPk() ? $db->getPk() : 'id') : $pkField;
+
         $pkValue = $this->request->request($pk, isset($where[$pk]) ? $where[$pk] : (isset($extendData[$pk]) ? $extendData[$pk] : null));
         // 非POST请求, 获取数据并显示表单页面
         if (!$this->request->isPost()) {

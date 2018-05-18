@@ -71,7 +71,7 @@ class Index extends BasicAdmin
         foreach ($menus as $key => &$menu) {
             //如果是有子菜单的话，就继续子菜单的权限过滤.
             !empty($menu['sub']) && $menu['sub'] = $this->buildMenuData($menu['sub'], $nodes, $isLogin);
-            if (!empty($menu['sub'])) {//如果有子菜单
+            if (!empty($menu['sub'])) {//如果有子菜单,就忽略原本的 url
                 $menu['url'] = '#';
             } elseif (preg_match('/^https?\:/i', $menu['url'])) {//如果没有子菜单，而且有分配了 url 地址
                 // i修正模式,不区分大小写
@@ -94,7 +94,7 @@ class Index extends BasicAdmin
                 } elseif (isset($nodes[$node]) && $nodes[$node]['is_auth'] && $isLogin && !auth($node)) {
                     unset($menus[$key]);
                 }
-            } else {
+            } else {//如果填写的是 # ,就移除这个 节点
                 unset($menus[$key]);
             }
         }

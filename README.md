@@ -3,7 +3,17 @@
 
 ## 笔记
 ### 1.menu 的 javascript 有些不懂，为什么会默认自动选择没有子菜单的顶级菜单作为入口,
+### 2.出现下面的错误
 
+```$xslt
+Fatal error: Maximum function nesting level of '256' reached, aborting! in /ThinkAdmin/extend/service/ToolsService.php on line 150
+```
+
+[解决的方法:](https://stackoverflow.com/questions/8656089/solution-for-fatal-error-maximum-function-nesting-level-of-100-reached-abor)
+
+```$xslt
+to add xdebug.max_nesting_level = 200 in your php.ini
+```
 
 
 
