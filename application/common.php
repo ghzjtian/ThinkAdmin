@@ -40,7 +40,7 @@ function auth($node)
 }
 
 /**
- * 设备或配置系统参数
+ * 设置 或 获取 系统参数
  * @param string $name 参数名称
  * @param bool $value 默认是null为获取值，否则为更新
  * @return string|bool

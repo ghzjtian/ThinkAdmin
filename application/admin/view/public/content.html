@@ -1,7 +1,9 @@
+<!--该文件定义了右侧的布局-->
 <!-- 右则内容区域 开始 -->
 {block name="style"}{/block}
 <div class="layui-card">
     <!--{notempty name='title'}-->
+    <!--如果有标题指定.-->
     <div class="layui-header notselect">
         <div class="pull-left"><span>{$title}</span></div>
         <div class="pull-right margin-right-15 nowrap">{block name="button"}{/block}</div>

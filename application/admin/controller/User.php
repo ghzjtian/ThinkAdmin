@@ -46,6 +46,8 @@ class User extends BasicAdmin
     {
         $this->title = '系统用户管理';
         list($get, $db) = [$this->request->get(), Db::name($this->table)];
+
+        //点击了搜索后的条件判断
         foreach (['username', 'phone', 'mail'] as $key) {
             (isset($get[$key]) && $get[$key] !== '') && $db->whereLike($key, "%{$get[$key]}%");
         }
@@ -53,6 +55,8 @@ class User extends BasicAdmin
             list($start, $end) = explode(' - ', $get['date']);
             $db->whereBetween('login_at', ["{$start} 00:00:00", "{$end} 23:59:59"]);
         }
+
+
         return parent::_list($db->where(['is_deleted' => '0']));
     }
 
@@ -107,6 +111,7 @@ class User extends BasicAdmin
     public function pass()
     {
         if ($this->request->isGet()) {
+            //是否需要验证旧的密码?
             $this->assign('verify', false);
             return $this->_form($this->table, 'pass');
         }

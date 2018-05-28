@@ -2,9 +2,11 @@
 
 {block name="button"}
 <!--{if auth("$classuri/add")}-->
+<!-- data-modal 加载html到modal(弹出框)中  ,data-title 定义弹出框的 title -->
 <button data-modal='{:url("$classuri/add")}' data-title="添加菜单" class='layui-btn layui-btn-sm layui-btn-primary'>添加菜单</button>
 <!--{/if}-->
 <!--{if auth("$classuri/del")}-->
+<!-- data-field ,定义数据要进行的操作-->
 <button data-update data-field='delete' data-action='{:url("$classuri/del")}' class='layui-btn layui-btn-sm layui-btn-primary'>删除菜单</button>
 <!--{/if}-->
 {/block}
@@ -14,6 +16,7 @@
     <!--{empty name='list'}-->
     <p class="help-block text-center well">没 有 记 录 哦！</p>
     <!--{else}-->
+    <!--定义 post 的 action 为 resort-->
     <input type="hidden" value="resort" name="action">
     <table id="test" class="layui-table" lay-skin="line">
         <thead>
@@ -34,10 +37,12 @@
         <tbody>
         <!--{foreach $list as $key=>$vo}-->
         <tr>
+            <!--选择框-->
             <td class='list-table-check-td'>
                 <input class="list-check-box" value='{$vo.ids}' type='checkbox'>
             </td>
             <td class='list-table-sort-td'>
+                <!-- $vo.sort排序的序号-->
                 <input name="_{$vo.id}" value="{$vo.sort}" class="list-sort-input">
             </td>
             <td class='text-center'>
@@ -49,10 +54,11 @@
                 {if $vo.status eq 0}<span>已禁用</span>{elseif $vo.status eq 1}<span class="color-green">使用中</span>{/if}
             </td>
             <td class='text-center nowrap notselect'>
-
+                <!--验证用户是否有 ADD 的权限-->
                 {if auth("$classuri/add")}
                 <span class="text-explode">|</span>
                 <!--{if $vo.spt<2}-->
+                <!--如果是第一级或第二级，就可以添加下级的菜单,把自己作为父类-->
                 <a data-title="添加菜单" data-modal='{:url("$classuri/add")}?pid={$vo.id}'>添加下级</a>
                 <!--{else}-->
                 <a class="color-desc">添加下级</a>
@@ -66,6 +72,7 @@
 
                 {if $vo.status eq 1 and auth("$classuri/forbid")}
                 <span class="text-explode">|</span>
+                <!---->
                 <a data-update="{$vo.ids}" data-field='status' data-value='0' data-action='{:url("$classuri/forbid")}'>禁用</a>
                 {elseif auth("$classuri/resume")}
                 <span class="text-explode">|</span>

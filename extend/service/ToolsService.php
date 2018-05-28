@@ -81,7 +81,7 @@ class ToolsService
     }
 
     /**
-     * 一维数据数组生成数据树
+     * 一维数据数组生成数据树,让 父类 的 sub 属性关联对应的子项.
      * @param array $list 数据列表
      * @param string $id 父ID Key
      * @param string $pid ID Key
@@ -149,6 +149,7 @@ class ToolsService
     {
         $ids = [intval($id)];
         foreach ($list as $vo) {
+            //如果子类的父类正是这个，就继续循环找出子类的 id
             if (intval($vo[$pkey]) > 0 && intval($vo[$pkey]) === intval($id)) {
                 $ids = array_merge($ids, self::getArrSubIds($list, intval($vo[$key]), $key, $pkey));
             }

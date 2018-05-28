@@ -81,7 +81,10 @@ $(function () {
             var index = layer.msg(msg, {icon: 1, shade: this.shade, scrollbar: false, end: callback, time: (time || 2) * 1000, shadeClose: true});
             return this.dialogIndexs.push(index), index;
         };
+
         // 显示失败类型的消息
+        // 如 controller 中的消息: $this->error('两次输入的密码不一致，请重新输入！');
+        //  TODO 不知道信息是怎么传递到这里的.!!!
         this.error = function (msg, time, callback) {
             var index = layer.msg(msg, {icon: 2, shade: this.shade, scrollbar: false, time: (time || 3) * 1000, end: callback, shadeClose: true});
             return this.dialogIndexs.push(index), index;
@@ -544,6 +547,7 @@ $(function () {
 
     /*! 注册 data-modal 事件行为 */
     $body.on('click', '[data-modal]', function () {
+        //如果没有传递 data-title ，title 就默认填写为  编辑.
         return $.form.modal($(this).attr('data-modal'), 'open_type=modal', $(this).attr('data-title') || '编辑');
     });
 
@@ -559,24 +563,32 @@ $(function () {
 
     /*! 注册 data-check 事件行为 */
     $body.on('click', '[data-check-target]', function () {
+        //双感叹号, 返回 True or False,表示真实存在的数据转换成布尔值
         var checked = !!this.checked;
         $($(this).attr('data-check-target')).map(function () {
             this.checked = checked;
         });
     });
 
-    /*! 注册 data-update 事件行为 */
+    /*! 注册 data-update 事件行为
+    * 在 admin/menu/index 的 删除菜单中，有用到
+    * */
     $body.on('click', '[data-update]', function () {
+        //获取到需要更新的字段的 id 值.
         var id = $(this).attr('data-update') || (function () {
             var data = [];
             return $($(this).attr('data-list-target') || 'input.list-check-box').map(function () {
                 (this.checked) && data.push(this.value);
             }), data.join(',');
         }).call(this);
+
+        //没有选择数据
         if (id.length < 1) {
             return $.msg.tips('请选择需要操作的数据！');
         }
+        //要执行的 URL
         var action = $(this).attr('data-action') || $(this).parents('[data-location]').attr('data-location');
+        //值和相应的字段名
         var value = $(this).attr('data-value') || 0, field = $(this).attr('data-field') || 'status';
         $.msg.confirm('确定要操作这些数据吗？', function () {
             $.form.load(action, {field: field, value: value, id: id}, 'post');
@@ -594,9 +606,13 @@ $(function () {
         window.location.href = '#' + $.menu.parseUri(this.href, this);
     });
 
-    /*! 注册 data-file 事件行为 */
+    /*! 注册 data-file 事件行为
+    * 文件的上传
+    * */
     $body.on('click', '[data-file]', function () {
+        //上传的方法是否是单文件
         var method = $(this).attr('data-file') === 'one' ? 'one' : 'mtl';
+        //type 上传的文件的类型,    field 要改变的域
         var type = $(this).attr('data-type') || 'jpg,png', field = $(this).attr('data-field') || 'file';
         var title = $(this).attr('data-title') || '文件上传', uptype = $(this).attr('data-uptype') || '';
         var url = window.ROOT_URL + '/index.php/admin/plugs/upfile.html?mode=' + method + '&uptype=' + uptype + '&type=' + type + '&field=' + field;

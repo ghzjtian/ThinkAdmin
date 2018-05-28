@@ -5,7 +5,9 @@
         <div class="layui-input-block">
             <select name='pid' class='layui-select full-width' lay-ignore>
                 <!--{foreach $menus as $menu}-->
+
                 <!--{eq name='menu.id' value='$vo.pid|default=0'}-->
+                <!-- @TODO menu.spl|raw  在 Menu ,-->
                 <option selected value='{$menu.id}'>{$menu.spl|raw}{$menu.title}</option>
                 <!--{else}-->
                 <option value='{$menu.id}'>{$menu.spl|raw}{$menu.title}</option>
@@ -19,6 +21,8 @@
     <div class="layui-form-item">
         <label class="layui-form-label">菜单名称</label>
         <div class="layui-input-block">
+            <!--@TODO,不知道 input 的特性为什么会这样.-->
+            <!--填写了 required="required" 后，输入框的前面会有 * 号，如果不符合，框内就会弹出 title 的文字-->
             <input type="text" name="title" value='{$vo.title|default=""}' required="required" title="请输入菜单名称" placeholder="请输入菜单名称" class="layui-input">
             <p class="help-block color-desc"><b>必填</b>，请填写菜单名称（如：系统管理），建议字符不要太长，一般4-6个汉字</p>
         </div>
@@ -27,6 +31,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">菜单链接</label>
         <div class="layui-input-block">
+            <!--onblur 焦点发生变化时，就触发(这里是当值为''时，就填补上 '#')-->
             <input type="text" onblur="(this.value === '') && (this.value = '#')" name="url" autocomplete="off" required="required" title="请输入菜单链接" placeholder="请输入菜单链接" value="{$vo.url|default='#'}" class="layui-input typeahead">
             <p class="help-block color-desc">
                 <b>必填</b>，请填写系统节点（如：admin/user/index），节点加入权限管理时菜单才会自动隐藏，非规则内的不会隐藏；

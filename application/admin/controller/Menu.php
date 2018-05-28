@@ -46,21 +46,24 @@ class Menu extends BasicAdmin
      */
     public function index()
     {
+        //指定标题
         $this->title = '后台菜单管理';
         $db = Db::name($this->table)->order('sort asc,id asc');
         return parent::_list($db, false);
     }
 
     /**
-     * 列表数据处理
+     * 列表数据处理,刚刚进去 menu 页面时调用
      * @param array $data
      */
     protected function _index_data_filter(&$data)
     {
         foreach ($data as &$vo) {
+            //显示绑定的参数
             if ($vo['url'] !== '#') {
                 $vo['url'] = url($vo['url']) . (empty($vo['params']) ? '' : "?{$vo['params']}");
             }
+            //在本类及子类的 id 中，加入 ',' 分隔符.
             $vo['ids'] = join(',', ToolsService::getArrSubIds($data, $vo['id']));
         }
         $data = ToolsService::arr2table($data);
@@ -102,11 +105,12 @@ class Menu extends BasicAdmin
     protected function _form_filter(&$vo)
     {
         if ($this->request->isGet()) {
-            // 上级菜单处理
+            // 上级菜单处理,选择启用了的菜单
             $_menus = Db::name($this->table)->where(['status' => '1'])->order('sort asc,id asc')->select();
             $_menus[] = ['title' => '顶级菜单', 'id' => '0', 'pid' => '-1'];
             $menus = ToolsService::arr2table($_menus);
             foreach ($menus as $key => &$menu) {
+                //如果菜单的 '-'大于3 个，就在搜索结果中删除.
                 if (substr_count($menu['path'], '-') > 3) {
                     unset($menus[$key]);
                     continue;
@@ -127,9 +131,11 @@ class Menu extends BasicAdmin
                 }
             }
             // 设置上级菜单
+            //如果在数据库搜索结果中没有 pid 的值,就获取 URL 传递过来的 pid 的值.
             if (!isset($vo['pid']) && $this->request->get('pid', '0')) {
                 $vo['pid'] = $this->request->get('pid', '0');
             }
+            //绑定菜单的值
             $this->assign(['nodes' => array_column($nodes, 'node'), 'menus' => $menus]);
         }
     }

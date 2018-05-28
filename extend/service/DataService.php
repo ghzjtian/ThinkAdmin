@@ -77,9 +77,12 @@ class DataService
     {
         $db = is_string($dbQuery) ? Db::name($dbQuery) : $dbQuery;
         list($table, $map) = [$db->getTable(), [$key => isset($data[$key]) ? $data[$key] : '']];
+        //如果里面已经有了数据，就执行更新操作
         if (Db::table($table)->where($where)->where($map)->count() > 0) {
             return Db::table($table)->strict(false)->where($where)->where($map)->update($data) !== false;
         }
+
+        //否则执行插入操作.
         return Db::table($table)->strict(false)->insert($data) !== false;
     }
 
@@ -96,8 +99,12 @@ class DataService
         $request = app('request');
         $db = is_string($dbQuery) ? Db::name($dbQuery) : $dbQuery;
         list($pk, $table, $map) = [$db->getPk(), $db->getTable(), []];
+        //拿到要更新的字段的 字段名 和 相应的值
         list($field, $value) = [$request->post('field', ''), $request->post('value', '')];
+
+        //定义数据库执行的条件,如果是 ids ，就以逗号去分隔开
         $map[] = [empty($pk) ? 'id' : $pk, 'in', explode(',', $request->post('id', ''))];
+
         // 删除模式，如果存在 is_deleted 字段使用软删除
         if ($field === 'delete') {
             if (method_exists($db, 'getTableFields') && in_array('is_deleted', $db->getTableFields())) {

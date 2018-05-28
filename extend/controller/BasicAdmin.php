@@ -59,16 +59,22 @@ class BasicAdmin extends Controller
         //获得主键值
         $pk = empty($pkField) ? ($db->getPk() ? $db->getPk() : 'id') : $pkField;
 
+        //获得传过来的主键对应的值
         $pkValue = $this->request->request($pk, isset($where[$pk]) ? $where[$pk] : (isset($extendData[$pk]) ? $extendData[$pk] : null));
+
         // 非POST请求, 获取数据并显示表单页面
         if (!$this->request->isPost()) {
-            $vo = ($pkValue !== null) ? array_merge((array)$db->where($pk, $pkValue)->where($where)->find(), $extendData) : $extendData;
+            //根据 $dbQuery 的值，去数据库中查找数据
+            $vo = ($pkValue !== null) ? array_merge((array)$db->where($pk, $pkValue)->where($where)->find(), $extendData) : $extendData;//根据主键获取到数据
             if (false !== $this->_callback('_form_filter', $vo, [])) {
+                //如果 title 不为空，就传进 html 中
                 empty($this->title) || $this->assign('title', $this->title);
                 return $this->fetch($tplFile, ['vo' => $vo]);
             }
             return $vo;
         }
+
+
         // POST请求, 数据自动存库
         $data = array_merge($this->request->post(), $extendData);
         if (false !== $this->_callback('_form_filter', $data, [])) {
@@ -98,22 +104,30 @@ class BasicAdmin extends Controller
     protected function _list($dbQuery = null, $isPage = true, $isDisplay = true, $total = false, $result = [])
     {
         $db = is_null($dbQuery) ? Db::name($this->table) : (is_string($dbQuery) ? Db::name($dbQuery) : $dbQuery);
-        // 列表排序默认处理
+
+        // 列表排序默认处理,内容提交后的处理,
         if ($this->request->isPost() && $this->request->post('action') === 'resort') {
+            //@TODO,不知道这里的 $this->request->post() 中的值是怎么来的.!!!
             foreach ($this->request->post() as $key => $value) {
+                //在 menu/index 中，点击了排序操作后， $key 对应为 System_menu 中的 id 值， $value 对应为 System_menu 中的 sort 值.
                 if (preg_match('/^_\d{1,}$/', $key) && preg_match('/^\d{1,}$/', $value)) {
+                    //去除 key 上面的 '_' 底杠
                     list($where, $update) = [['id' => trim($key, '_')], ['sort' => $value]];
+                    // 开始更新的操作
                     if (false === Db::table($db->getTable())->where($where)->update($update)) {
                         $this->error('列表排序失败, 请稍候再试');
                     }
                 }
             }
+            //@TODO,不知道这里怎么把数据渲染到一个 Toast 中的.
             $this->success('列表排序成功, 正在刷新列表', '');
         }
         // 列表数据查询与显示
         if (null === $db->getOptions('order')) {
             in_array('sort', $db->getTableFields($db->getTable())) && $db->order('sort asc');
         }
+
+        //是否分页
         if ($isPage) {
             $rows = intval($this->request->get('rows', cookie('page-rows')));
             cookie('page-rows', $rows = $rows >= 10 ? $rows : 20);
@@ -142,7 +156,10 @@ class BasicAdmin extends Controller
         } else {
             $result['list'] = $db->select();
         }
+
+        //返回 View
         if (false !== $this->_callback('_data_filter', $result['list'], []) && $isDisplay) {
+            //如果title 有值，就赋值
             !empty($this->title) && $this->assign('title', $this->title);
             return $this->fetch('', $result);
         }
@@ -150,7 +167,7 @@ class BasicAdmin extends Controller
     }
 
     /**
-     * 当前对象回调成员方法
+     * 当前对象回调成员方法,可以调用父类的方法
      * @param string $method
      * @param array|bool $data1
      * @param array|bool $data2
@@ -158,6 +175,7 @@ class BasicAdmin extends Controller
      */
     protected function _callback($method, &$data1, $data2)
     {
+        //例如是 menu 的 add Action , $_method 就会为 add_form_result
         foreach ([$method, "_" . $this->request->action() . "{$method}"] as $_method) {
             if (method_exists($this, $_method) && false === $this->$_method($data1, $data2)) {
                 return false;

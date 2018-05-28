@@ -35,6 +35,7 @@ class Plugs extends BasicAdmin
      */
     public function upfile()
     {
+
         $uptype = $this->request->get('uptype');
         if (!in_array($uptype, ['local', 'qiniu', 'oss'])) {
             $uptype = sysconf('storage_type');

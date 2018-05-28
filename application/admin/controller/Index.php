@@ -130,10 +130,13 @@ class Index extends BasicAdmin
         if (intval($this->request->request('id')) !== intval(session('user.id'))) {
             $this->error('只能修改当前用户的密码！');
         }
+        //显示修改密码的 html dialog
         if ($this->request->isGet()) {
             $this->assign('verify', true);
             return $this->_form('SystemUser', 'user/pass');
         }
+        //验证 修改密码
+        //取得提交过来的数据
         $data = $this->request->post();
         if ($data['password'] !== $data['repassword']) {
             $this->error('两次输入的密码不一致，请重新输入！');
